@@ -1,32 +1,41 @@
-import { SymbolView, SymbolViewProps, SymbolWeight } from 'expo-symbols';
-import { StyleProp, ViewStyle } from 'react-native';
+import React from "react";
+import { Image, StyleProp, ImageStyle } from "react-native";
+import { SymbolWeight } from "expo-symbols";
 
-export function IconSymbol({
+// Add your custom icon mappings here.
+const ICON_MAPPING = {
+  "Trade.fill": require("@/assets/images/TradeIcon.png"),
+  "Analysis.fill": require("@/assets/images/AnalysisIcon.png"),
+} as const;
+
+export type IconSymbolName = keyof typeof ICON_MAPPING;
+
+interface IconSymbolProps {
+  name: IconSymbolName;
+  size?: number;
+  color?: string;
+  style?: StyleProp<ImageStyle>;
+  weight?: SymbolWeight;
+}
+
+const IconSymbol: React.FC<IconSymbolProps> = ({
   name,
   size = 24,
   color,
   style,
-  weight = 'regular',
-}: {
-  name: SymbolViewProps['name'];
-  size?: number;
-  color: string;
-  style?: StyleProp<ViewStyle>;
-  weight?: SymbolWeight;
-}) {
+}) => {
+  const iconSource = ICON_MAPPING[name];
+
+  if (!iconSource) {
+    return null; // Return null if the icon name is not found in the mapping
+  }
+
   return (
-    <SymbolView
-      weight={weight}
-      tintColor={color}
-      resizeMode="scaleAspectFit"
-      name={name}
-      style={[
-        {
-          width: size,
-          height: size,
-        },
-        style,
-      ]}
+    <Image
+      source={iconSource}
+      style={[{ width: size, height: size, tintColor: color }, style]}
     />
   );
-}
+};
+
+export default IconSymbol;
